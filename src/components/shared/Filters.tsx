@@ -3,7 +3,7 @@ import React from "react";
 import { Title } from "./Title";
 import { FilterCheckbox } from "./FilterCheckbox";
 import { Input } from "../ui/input";
-import RangeSlider from "./RangeSlider";
+import { RangeSlider } from "./RangeSlider";
 
 interface FiltersProps {
   className?: string;
@@ -19,7 +19,7 @@ export default function Filters({ className }: FiltersProps) {
       </div>
       <div className="mt-6">
         <p className="font-bold mb-3">Цена от и до:</p>
-        <div className="flex gap-4">
+        <div className="flex gap-4 mb-3">
           <Input
             type="number"
             placeholder="100"
@@ -29,7 +29,7 @@ export default function Filters({ className }: FiltersProps) {
           />
           <Input type="number" max={1000} min={100} placeholder="1000" />
         </div>
-        <RangeSlider />
+        <RangeSlider min={0} max={5000} value={[0, 5000]} step={10} />
       </div>
     </div>
   );
