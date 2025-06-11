@@ -1,12 +1,14 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { FilterChecboxProps, FilterCheckbox } from "./FilterCheckbox";
 import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 type Item = FilterChecboxProps;
 
 interface FiltersCheckboxGroupProps {
   title: string;
-  items?: Item[];
+  items: Item[];
   defaultItems?: Item[];
   limit?: number;
   searchInputPlaceholder?: string;
@@ -25,19 +27,33 @@ export default function FiltersCheckboxGroup({
   defaultValue,
   className,
 }: FiltersCheckboxGroupProps) {
+  const [showAll, setShowAll] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const list = showAll
+    ? items.filter((item) =>
+        item.text.toLowerCase().includes(searchValue.toLocaleLowerCase())
+      )
+    : items?.slice(0, limit);
+
+  function onChangeSearchValue(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearchValue(e.target.value);
+  }
+
   return (
     <div className={className}>
       <p className="font-bold mb-3">{title}</p>
       <div className="mb-5">
         <Input
+          onChange={onChangeSearchValue}
           placeholder={searchInputPlaceholder}
           className="bg-gray-50 border-none"
         />
       </div>
       <div>
         {items &&
-          items.map((item, index) => (
+          list.map((item, index) => (
             <FilterCheckbox
+              key={index}
               text={item.text}
               value={item.value}
               checked={false}
@@ -45,6 +61,16 @@ export default function FiltersCheckboxGroup({
               onCheckedChange={() => console.log("j")}
             />
           ))}
+        {items.length > limit && (
+          <div className={showAll ? "border-t border-t-neutral-100 mt-4" : ""}>
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="text-primary mt-3"
+            >
+              {showAll ? "Скрыть" : "+ Показать все"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
