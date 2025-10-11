@@ -15,6 +15,7 @@ import { IngredientItem } from "./Ingredient-item";
 import { getPizzaDetails } from "../../lib/get-pizza-details";
 import { useAvailablePizza } from "../../hooks/use-available-pizza";
 import { useCartStore } from "../../store/cart";
+import { useRouter } from "next/navigation";
 
 interface Props {
   imageUrl: string;
@@ -23,6 +24,7 @@ interface Props {
   items: ProductItem[];
   loading?: boolean;
   className?: string;
+  onSubmit?: (productItemId?: number, ingredients?: number[]) => void;
 }
 
 /**
@@ -35,6 +37,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
   ingredients,
   loading,
   className,
+  onSubmit,
 }) => {
   const {
     size,
@@ -44,6 +47,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
     selectedIngredients,
     toggleSelectedIngredients,
     availableSizes,
+    productItemId,
   } = useAvailablePizza(items);
 
   const { textDetails, totalPrice } = getPizzaDetails({
@@ -53,11 +57,6 @@ export const ChoosePizzaForm: React.FC<Props> = ({
     ingredients,
     selectedIngredients,
   });
-
-  const addCartItem = useCartStore((state) => state.addCartItem);
-  const item = items.filter(
-    (item) => item.pizzaType === types && item.size === size
-  )[0];
 
   return (
     <div className={cn(className, "flex flex-1 ")}>
@@ -98,10 +97,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
           loading={loading}
           className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10"
           onClick={() => {
-            addCartItem({
-              productItemId: item.id,
-              ingredients: [...selectedIngredients],
-            });
+            onSubmit?.(productItemId, [...selectedIngredients]);
           }}
         >
           Добавить в корзину за {totalPrice} ₽

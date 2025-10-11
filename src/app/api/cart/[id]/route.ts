@@ -11,7 +11,9 @@ export async function PATCH(
     const data = (await req.json()) as { quantity: number };
     const token = req.cookies.get("token")?.value;
 
-    if (!token) return NextResponse.json("Not found cart");
+    if (!token) {
+      return NextResponse.json({ error: "Cart token not found" });
+    }
 
     const cartItem = await prisma.cartItem.findFirst({
       where: {
@@ -19,7 +21,9 @@ export async function PATCH(
       },
     });
 
-    if (!cartItem) return NextResponse.json("Not found cart item");
+    if (!cartItem) {
+      return NextResponse.json({ error: "Cart item not found" });
+    }
 
     await prisma.cartItem.update({
       where: {
@@ -29,13 +33,19 @@ export async function PATCH(
         quantity: data.quantity,
       },
     });
-    const updateCartItem = await updateCartTotalAmount(token);
-    return NextResponse.json(updateCartItem);
-  } catch (e) {
-    console.log("[ERROR_PATCH] SERVER LOG", e);
-    return NextResponse.json("server error");
+
+    const updatedUserCart = await updateCartTotalAmount(token);
+
+    return NextResponse.json(updatedUserCart);
+  } catch (error) {
+    console.log("[CART_PATCH] Server error", error);
+    return NextResponse.json(
+      { message: "Не удалось обновить корзину" },
+      { status: 500 }
+    );
   }
 }
+
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -44,17 +54,34 @@ export async function DELETE(
     const id = Number(params.id);
     const token = req.cookies.get("token")?.value;
 
-    if (!token) return NextResponse.json("Not found cart");
+    if (!token) {
+      return NextResponse.json({ error: "Cart token not found" });
+    }
+
+    const cartItem = await prisma.cartItem.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!cartItem) {
+      return NextResponse.json({ error: "Cart item not found" });
+    }
 
     await prisma.cartItem.delete({
       where: {
         id,
       },
     });
-    const updateCartItem = await updateCartTotalAmount(token);
-    return NextResponse.json(updateCartItem);
-  } catch (e) {
-    console.log("[ERROR_ERROR] SERVER LOG", e);
-    return NextResponse.json("server error");
+
+    const updatedUserCart = await updateCartTotalAmount(token);
+
+    return NextResponse.json(updatedUserCart);
+  } catch (error) {
+    console.log("[CART_DELETE] Server error", error);
+    return NextResponse.json(
+      { message: "Не удалось удалить корзину" },
+      { status: 500 }
+    );
   }
 }

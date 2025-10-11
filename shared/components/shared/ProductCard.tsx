@@ -11,6 +11,7 @@ interface Props {
   price: number;
   imageUrl: string;
   className?: string;
+  ingredients: string[];
 }
 
 export default function ProductCard({
@@ -19,6 +20,7 @@ export default function ProductCard({
   price,
   imageUrl,
   className,
+  ingredients,
 }: Props) {
   return (
     <div className={className}>
@@ -27,7 +29,11 @@ export default function ProductCard({
           <img className="w-[215px] h-[215px]" src={imageUrl} alt={name} />
         </div>
         <Title text={name} size="sm" className="mb-1 mt-3 font-bold" />
-        <p className="text-sm text-gray-400">Цыпленок, сыр, моцарелла...</p>
+        <p className="text-sm text-gray-400">
+          {ingredients.map((ingredient) => {
+            return `${ingredient} `;
+          })}
+        </p>
         <div className="flex justify-between items-center mt-4">
           <span className="text-[20px]">
             от <b>{price} ₽</b>

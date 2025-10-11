@@ -6,8 +6,9 @@ import { Title } from "./Title";
 import { cn } from "../../lib/utils";
 import ProductCard from "./ProductCard";
 import { useCategoryStore } from "../../store/category";
+import { ProductWithRelations } from "../../../@types/prisma";
 interface Props {
-  items: any[];
+  items: ProductWithRelations[];
   title: string;
   listClassName?: string;
   className?: string;
@@ -42,6 +43,9 @@ export default function ProductsGroupList({
             name={product.name}
             price={product.items[0].price}
             key={product.id}
+            ingredients={product.ingredients.map(
+              (ingredient) => ingredient.name
+            )}
           />
         ))}
       </div>

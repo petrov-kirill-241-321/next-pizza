@@ -33,6 +33,7 @@ export default function CartDrawer({
   const items = useCartStore((state) => state.items);
   const updateItemQuantity = useCartStore((state) => state.updateItemQuantity);
   const removeCartItem = useCartStore((state) => state.removeCartItem);
+  const loading = useCartStore((state) => state.loading);
 
   React.useEffect(() => {
     fetchCartItems();
@@ -45,6 +46,7 @@ export default function CartDrawer({
   ) {
     updateItemQuantity(id, type === "plus" ? quentity + 1 : quentity - 1);
   }
+
   //TODO: выводить в правильном падеже
   return (
     <Sheet>
@@ -105,7 +107,7 @@ export default function CartDrawer({
                         item.pizzaType as TypePizzaTypes,
                         item.pizzaSize as TypePizzaSizes
                       )}
-                      disabled={item.disabled}
+                      disabled={loading}
                       name={item.name}
                       price={item.price}
                       quantity={item.quantity}
@@ -113,6 +115,7 @@ export default function CartDrawer({
                         onClickCountButton(item.id, item.quantity, type)
                       }
                       onClickRemove={() => removeCartItem(item.id)}
+                      loading={loading}
                     />
                   </div>
                 ))}
@@ -130,12 +133,7 @@ export default function CartDrawer({
                   </div>
 
                   <Link href="/checkout">
-                    <Button
-                      //   onClick={() => setRedirecting(true)}
-                      //   loading={redirecting}
-                      type="submit"
-                      className="w-full h-12 text-base"
-                    >
+                    <Button type="submit" className="w-full h-12 text-base">
                       Оформить заказ
                       <ArrowRight className="w-5 ml-2" />
                     </Button>

@@ -12,6 +12,7 @@ interface Props extends CartItemProps {
   onClickCountButton?: (type: "plus" | "minus") => void;
   onClickRemove?: () => void;
   className?: string;
+  loading?: boolean;
 }
 
 export const CartDrawerItem: React.FC<Props> = ({
@@ -24,6 +25,7 @@ export const CartDrawerItem: React.FC<Props> = ({
   onClickCountButton,
   onClickRemove,
   className,
+  loading,
 }) => {
   return (
     <div
@@ -43,7 +45,11 @@ export const CartDrawerItem: React.FC<Props> = ({
         <hr className="my-3" />
 
         <div className="flex items-center justify-between">
-          <CountButton onClick={onClickCountButton} value={quantity} />
+          <CountButton
+            onClick={onClickCountButton}
+            value={quantity}
+            loading={loading}
+          />
 
           <div className="flex items-center gap-3">
             <CartItemDetailsPrice value={price} />

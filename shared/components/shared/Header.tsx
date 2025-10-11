@@ -12,9 +12,15 @@ import CartDrawer from "./cart-drawer";
 
 interface HeaderProps {
   className?: string;
+  hasSearch?: boolean;
+  hasCart?: boolean;
 }
 
-export default function Header({ className }: HeaderProps) {
+export default function Header({
+  className,
+  hasSearch = true,
+  hasCart = true,
+}: HeaderProps) {
   return (
     <header className={cn("border-b ", className)}>
       <Container className="flex justify-between items-center py-8">
@@ -29,9 +35,7 @@ export default function Header({ className }: HeaderProps) {
             </div>
           </div>
         </Link>
-        <div className="mx-8 flex-1">
-          <SearchInput />
-        </div>
+        <div className="mx-8 flex-1">{hasSearch && <SearchInput />}</div>
         <div className="flex items-center gap-3">
           <Button
             variant="outline"
@@ -40,9 +44,11 @@ export default function Header({ className }: HeaderProps) {
             <User size={16} />
             Войти
           </Button>
-          <CartDrawer>
-            <CartButton />
-          </CartDrawer>
+          {hasCart && (
+            <CartDrawer>
+              <CartButton />
+            </CartDrawer>
+          )}
         </div>
       </Container>
     </header>

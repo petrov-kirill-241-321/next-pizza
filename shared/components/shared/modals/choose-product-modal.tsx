@@ -2,12 +2,9 @@
 
 import { Dialog, DialogContent } from "../../ui/dialog";
 import { cn } from "../../../lib/utils";
-import { Product } from "@prisma/client";
-import { Title } from "../Title";
 import { useRouter } from "next/navigation";
 import { ProductForm } from "../ProductForm";
 import { ProductWithRelations } from "../../../../@types/prisma";
-import { Container } from "../Container";
 
 interface Props {
   product: ProductWithRelations;
@@ -24,7 +21,12 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
           className
         )}
       >
-        <ProductForm product={product} onSubmit={() => router.back()} />
+        <ProductForm
+          product={product}
+          onSubmit={() => {
+            router.back();
+          }}
+        />
       </DialogContent>
     </Dialog>
   );
