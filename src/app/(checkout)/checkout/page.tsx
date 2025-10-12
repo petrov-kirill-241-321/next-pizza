@@ -14,6 +14,8 @@ import {
 } from "../../../../shared/constants/checkout-form-shema";
 import { CheckoutPersonalForm } from "../../../../shared/components/shared/form/form-personal-info";
 import { CheckoutAddressForm } from "../../../../shared/components/shared/form/form-address";
+import { createOrder } from "@/app/actions";
+import toast from "react-hot-toast";
 
 export default function CheckoutPage() {
   const { removeCartItem, items, loading, updateItemQuantity, totalAmount } =
@@ -37,7 +39,21 @@ export default function CheckoutPage() {
     },
   });
 
-  const onSubmit = (data: CheckoutFormValues) => console.log(data);
+  const onSubmit = async (data: CheckoutFormValues) => {
+    try {
+      toast.loading("Идет отправка заказа...");
+      const url = await createOrder(data);
+      console.log(url);
+      if (url) {
+        window.location.href = url;
+      } else {
+        toast.error("Не удалось создать заказ");
+      }
+    } catch (e) {
+      console.error("SUBMIT ORDER FORM ERROR", e);
+      toast.error("Не удалось создать заказ");
+    }
+  };
 
   return (
     <Container className="mt-10">
@@ -56,12 +72,16 @@ export default function CheckoutPage() {
                 items={items}
                 loading={loading}
               />
-              <CheckoutPersonalForm />
-              <CheckoutAddressForm />
+              <CheckoutPersonalForm
+                className={loading ? "opacity-50 pointer-events-none" : ""}
+              />
+              <CheckoutAddressForm
+                className={loading ? "opacity-50 pointer-events-none" : ""}
+              />
             </div>
 
             {/* Правая часть */}
-            <CheckoutSidebar totalAmount={totalAmount} />
+            <CheckoutSidebar totalAmount={totalAmount} loading={loading} />
           </div>
         </form>
       </FormProvider>

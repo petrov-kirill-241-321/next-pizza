@@ -1,6 +1,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import QueryString from "qs";
-import React from "react";
+import React, { useRef } from "react";
 import { useSet } from "react-use";
 
 interface RangeSliderProps {
@@ -18,6 +18,7 @@ export const useQueryFilters = () => {
     keyof QueryFilters,
     string
   >;
+  const isMounted = useRef(false);
 
   const [prices, setPrices] = React.useState<RangeSliderProps>({
     priceFrom: Number(searchParams.get("priceFrom")) || undefined,
@@ -48,17 +49,21 @@ export const useQueryFilters = () => {
   const updatePrices = (name: keyof RangeSliderProps, value: number) => {
     setPrices((prev) => ({ ...prev, [name]: value }));
   };
+
   React.useEffect(() => {
-    const filters = {
-      pizzaSizes: [...selectedPizzaSizes],
-      pizzaTypes: [...selectedPizzaTypes],
-      selectedIds: [...selectedIds],
-      priceFrom: prices.priceFrom,
-      priceTo: prices.priceTo,
-    };
-    const query = QueryString.stringify(filters, { arrayFormat: "comma" });
-    router.push(`?${query}`, { scroll: false });
-  }, [selectedIds, selectedPizzaSizes, selectedPizzaTypes, prices, router]);
+    if (isMounted.current) {
+      const filters = {
+        pizzaSizes: [...selectedPizzaSizes],
+        pizzaTypes: [...selectedPizzaTypes],
+        selectedIds: [...selectedIds],
+        priceFrom: prices.priceFrom,
+        priceTo: prices.priceTo,
+      };
+      const query = QueryString.stringify(filters, { arrayFormat: "comma" });
+      router.push(`?${query}`, { scroll: false });
+    }
+    isMounted.current = true;
+  }, [selectedIds, selectedPizzaSizes, selectedPizzaTypes, prices]);
 
   return {
     prices,
